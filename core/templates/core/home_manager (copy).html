@@ -1,0 +1,91 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block main %}
+<div class="mx-8">
+<!--     <div class="text-xl font-bold my-4">Welcome!</div> -->
+    <div id="calendar" class="" style="max-height: calc(100vh - 100px);"></div>
+</div>
+{% endblock main %}
+
+
+{% block script_includes %}
+<script src="{% static 'js/fullcalendar.js' %}"></script>
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+{% endblock script_includes %}
+
+{% block script %}
+<script>
+  console.log("loaded")
+
+  const calendarEl = document.getElementById('calendar')
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+//          dayMaxEvents: true, // allow "more" link when too many events
+    eventDidMount: function(info) {   //for hover-tooltips
+      if(info.event.extendedProps.details){
+          console.log("adding tooltip for", info)
+          tippy(info.el, {
+              content: renderTooltip(info.event.extendedProps),
+              allowHTML: true,
+              //onHide(instance) { return false;},//cancel hide 
+          });
+      }
+    },
+    //CLICK EVENT
+    eventClick: function(info) {
+      console.log("clicked on event", info)
+      // if(role_in_show=='owner' || role_in_show=='manager'){
+      //     showEventDetails_edit(info.event.extendedProps)
+          
+      // }else{
+      //     showEventDetails_view(info.event.extendedProps)
+      // }
+    }
+  })
+  calendar.render()
+  
+  function getBookings(){
+    $.ajax({
+        type: "POST",
+        headers: {
+            'X-CSRFToken': csrftoken
+        },
+        url: "/api/bookings/",
+        data: {},
+        success: function(response) {
+            console.log("got result", response); 
+            if(response.data && response.data.length > 0){
+                response.data.forEach(row => {
+                    addEvent(row)
+                })
+            }else{
+
+            }
+        }
+      })
+  }
+
+  function addEvent(e){
+      console.log("adding event", e)
+      let event = {
+          id: e.id,
+          title: e.service,
+          start: e.timeslot__date + " " + e.timeslot__period__start_time,
+          end: e.timeslot__date + " " + e.timeslot__period__end_time,
+          allDay: false,
+          editable: true,
+          extendedProps: e
+      }
+      calendar.addEvent(event);
+  }
+
+
+  $(document).ready(function() {
+      console.log("ready");
+      getBookings()
+
+  });
+    
+</script>
+{% endblock script %}

@@ -1,0 +1,79 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block main %}
+<div class="mx-8">
+    <div class="text-xl font-bold my-4">Appointments for {{ timeslot.date }}
+      <br>
+      <span class="font-normal">{{ timeslot.period.name }}
+        ({{ timeslot.period.start_time }} - {{ timeslot.period.end_time }})
+      {% if timeslot.note %}
+          <span class="italic">- {{ timeslot.note }}</span>
+        {% endif %}
+      </span>
+<!--       <div class="font-normal text-sm">
+      <a href="/home/{{prev_date}}">&lt;&lt; prev</a> - 
+      <a href="/home/{{next_date}}">next &gt;&gt;</a>
+      </div> -->
+    </div>
+
+  {% if bookings %}
+    <ol class="border-2 rounded-xl bg-gray-200 m-4 px-4">
+      {% for booking in bookings %}
+        <li class="mx-8 
+          {% if booking.status == "complete" or booking.completed %} text-green-600 {% endif %}
+          {% if booking.status == "cancelled" %} text-red-600 {% endif %}
+          {% if booking.status == "no_show" %} text-purple-600 {% endif %}
+          list-decimal my-4">
+          <b>{{ booking.user.first_name }} {{ booking.user.last_name }} </b>
+          {% if booking.service %}
+            - {{ booking.service }}
+          {% endif %}
+
+          <a href="/booking/{{booking.id}}/edit" class="font-bold text-sm text-green-600">EDIT</a>
+        </li>
+      {% endfor %}
+      {{ bookings.count }} / {{ timeslot.limit }} spaces filled
+      <a href='/timeslot/{{timeslot.id}}/edit'><i class='fa-solid fa-pen-to-square'></i></a>
+    </ol>
+
+  {% else %}
+    <div class="font-bold">
+      No bookings in this timeslot yet...
+    </div>
+    <div>
+      {{ timeslot.limit }} spaces available
+      <a href='/timeslot/{{timeslot.id}}/edit'><i class='fa-solid fa-pen-to-square'></i></a>
+    </div>
+  {% endif %}
+
+  <div>
+      <a href='/booking/{{timeslot.id}}/add/manager' class="text-green-600"><i class='fa-solid fa-plus-circle'></i> Add Reservation</a>
+  </div>
+</div>
+{% endblock main %}
+
+
+{% block script %}
+<script>
+  console.log("loaded")
+  function cancel(id){
+    let response = confirm("are you sure you want to cancel this appointment?")
+    if(response==true){
+      
+      $.ajax({
+          type: "POST",
+          headers: {
+              'X-CSRFToken': csrftoken
+          },
+          url: "/cancel/" + id,
+          data: {},
+          success: function(data) {
+              console.log("got result", data); 
+              window.location.reload()
+          }
+        })
+    }
+    
+  }
+</script>
+{% endblock script %}

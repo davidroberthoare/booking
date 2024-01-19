@@ -1,0 +1,92 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block main %}
+<div class="mx-8">
+    <div class="text-xl font-bold my-4">Welcome!</div>
+
+  {% if bookings %}
+    <div class="">Your upcoming appointment(s):</div>
+    <div class="border-2 rounded-xl bg-gray-200 m-4 px-4 font-bold">
+      {% for b in bookings %}
+      <div id="{{ b }}" class="my-3">
+        {{ b.timeslot.date }} 
+        - {{ b.timeslot.period }} 
+        ({{ b.timeslot.period.start_time }})
+        {% if b.service %}
+         :: {{ b.service }}
+        {% endif %}
+
+        <span onclick='cancel({{b.id}})' class="cursor-pointer text-red-600 text-sm italic font-normal">cancel</span>
+      </div>
+      {% endfor %}
+    </div>
+  
+  {% endif %}
+
+
+  {% if timeslots %}
+  <div class="">The CCI Salon is open for appointments :) Please choose a date and time below to reserve a session with our staff </div>
+    <div class="border-2 rounded-xl bg-gray-200 m-4 px-4">
+      {% regroup timeslots|dictsort:"date" by date as timeslot_list %}
+      {% for date in timeslot_list %}
+      <div class="my-3">
+        {{ date.grouper }}
+        {% for t in date.list %}
+        <div id="{{ t }}" class="mx-3">
+          {{ t.period }} 
+          @ {{ t.period.start_time }}
+
+          {% if t.note %}
+            <span class="italic">- {{ t.note }}</span>
+          {% endif %}
+          
+          
+
+          {% if t.available > 0 %}
+            ({{ t.available }} of {{ t.limit }} spots available) 
+            ~ <span class="font-bold text-green-600">
+              <a href="/booking/{{t.id}}/add">Reserve</a>
+            </span>
+          
+          {% else %}
+            ~ <span class="text-red-600 font-bold">FULL</span>
+          {% endif %}
+          
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+   <div class="font-bold">
+      The CCI Studio & Salon is currently not open for appointments. Check back soon!   
+   </div>
+  {% endif %}
+</div>
+{% endblock main %}
+
+
+{% block script %}
+<script>
+  console.log("loaded")
+  function cancel(id){
+    let response = confirm("are you sure you want to cancel this appointment?")
+    if(response==true){
+      
+      $.ajax({
+          type: "POST",
+          headers: {
+              'X-CSRFToken': csrftoken
+          },
+          url: "/booking/" + id + "/cancel",
+          data: {},
+          success: function(data) {
+              console.log("got result", data); 
+              window.location.reload()
+          }
+        })
+    }
+    
+  }
+</script>
+{% endblock script %}

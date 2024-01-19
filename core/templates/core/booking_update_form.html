@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block main %}
+    <div class="w-full h-full flex items-center justify-center">
+        <form method="POST" class="solo_form">
+            <div class="flex font-bold justify-center mt-6">
+                <img class="h-20 w-20 mb-3" src="{% static 'img/salon_icon.svg' %}" />
+            </div>
+            <div class="text-2xl">{{ view.title }} for: 
+              <b>{{object.user.first_name}} {{object.user.last_name}}</b>
+            </div>
+            <div class="text-xl text-green-600 font-bold">{{ object.timeslot.date }} 
+              - {{ object.timeslot.period }} 
+              ({{ object.timeslot.period.start_time }} - {{ object.timeslot.period.end_time }})
+              
+            </div>
+            {% csrf_token %}
+            <table>
+            {{ form }}
+            </table>
+            <input type="submit" value="UPDATE" class="w-full py-2 mt-4 rounded-full bg-blue-400 text-gray-100 focus:outline-none"/>
+<!--             <a href="/home" class="block text-center w-full py-2 mt-4 rounded-full bg-green-400 text-gray-100 focus:outline-none"/>DONE</a> -->
+        </form>
+    </div>
+{% endblock main %}

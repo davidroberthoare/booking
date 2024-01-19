@@ -1,0 +1,64 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block main %}
+ <div class="text-xl m-8 font-bold my-4">Week of {{ start|date:'M d' }}
+    <span class="font-normal text-sm">
+    <a href="/home/{{prev_date}}">&lt;&lt; prev</a> - 
+    <a href="/home/{{next_date}}">next &gt;&gt;</a>
+    </span>
+  </div>
+<div class="flex w-full justify-between">
+  {% for day in days %}
+    <div class='day block bg-gray-100 border border-gray-300 w-1/5' style=''>
+    <span class='font-bold p-4'>{{ day|date:'D, M d' }}</span>
+    <table class='h-full w-full'>
+      
+  {% for period in periods %}
+      <tr class='odd:bg-gray-200'>
+        <td class='period px-4 h-24' data-date='{{ day|date:"d-m-y" }}' data-period='{{ period.id }}'>
+            Per.{{ period.id }}:  
+            {% for t in timeslots %}
+              {% if t.date.day == day.day and t.period == period %}
+                <span id='{{t.id}}' class='open text-green-600 font-bold text-sm'>
+                  <a href='/timeslot/{{t.id}}'>OPEN ({{ t.num_booked }} / {{ t.limit }}) <i class='fa-solid fa-pen-to-square'></i></a>
+                </span>
+                {% if t.note %}
+                  <br>{{t.note}}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+        </td>
+      </tr>
+
+  {% endfor %}
+    </table>
+      
+    </div>
+  {% endfor %}
+</div>
+{% endblock main %}
+
+
+{% block script_includes %}
+{% endblock script_includes %}
+
+{% block script %}
+<script>
+
+  $(document).ready(function() {
+    console.log("ready");
+
+    //add 'plus' buttons to any empty rows
+    $("td.period").each(function(i){
+      let el = $(this);
+      console.log("looking for openings at:", el, el.find('.open'))
+      if(el.find('.open').length == 0){
+        console.log("NONE found!")
+        el.append("<a href='/timeslot/"+el.data('date')+"/"+el.data('period')+"/add'><i class='fa-solid fa-plus-circle mx-2 text-gray-400'></i></a>");
+      }
+    })
+
+  });
+    
+</script>
+{% endblock script %}

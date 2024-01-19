@@ -1,0 +1,26 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block main %}
+    <div class="w-full h-full flex items-center justify-center">
+        <form method="POST" class="solo_form">
+            <div class="flex font-bold justify-center mt-6">
+                <img class="h-20 w-20 mb-3" src="{% static 'img/salon_icon.svg' %}" />
+            </div>
+            <div class="text-2xl">{{ view.title }}</div>
+            <div class="text-xl text-green-600 font-bold">{{ view.timeslot.date }} 
+              ({% if view.timeslot.note %}{{view.timeslot.note}}{% endif %})
+              <br>
+              {{ view.timeslot.period }}: {{ view.timeslot.period.start_time }} - {{ view.timeslot.period.end_time }}
+            </div>
+
+            <div class="">
+              <a href='/accounts/register_manager' class="text-red-400"><i class='fa-solid fa-plus-circle'></i> Add User</a>
+            </div>
+            {% csrf_token %}
+            <table>
+            {{ form }}
+            </table>
+            <input type="submit" value="Save Reservation" class="w-full py-2 mt-4 rounded-full bg-blue-400 text-gray-100 focus:outline-none"/>
+        </form>
+    </div>
+{% endblock main %}

@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block main %}
+
+{% if form.errors %}
+<p>Errors on the form. Please try again.</p>
+{% endif %}
+
+<div class="w-full h-full flex items-center justify-center">
+    <form method="POST" class="">
+    <div class="flex font-bold justify-center mt-6">
+        <img class="h-20 w-20 mb-3" src="{% static 'img/salon_icon.svg' %}" />
+    </div>
+        {% csrf_token %}
+      <table>
+        {{ form }}
+      </table>
+        <input type="submit" value ="Register" class="w-full py-2 mt-4 rounded-full bg-blue-400 text-gray-100 focus:outline-none"/>
+    </form>
+</div>
+
+{% endblock %}

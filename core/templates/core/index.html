@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block main %}
+<div class="text-center">
+    <img src="" class="inline h-24 m-5">
+    <div class="text-xl font-bold m-4">Welcome to CCI Studio</div>
+    <div>Please <a href="{% url 'core:login' %}" class="underline cursor-pointer">Login</a>, or <a href="{% url 'core:register' %}" class="underline cursor-pointer">Create an Account</a> to see our availability and book an appointment.</div>
+</div>
+{% endblock main %}

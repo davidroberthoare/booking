@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="EN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>
+            CCI Studio ~ {{ title }}
+        </title>
+        <meta name="description" content="{{ meta_description }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <script>
+        {% if user.is_authenticated %}
+            const user_id = "{{user.id}}";
+            const csrftoken = "{{ csrf_token }}";
+        {% else %}
+            const user_id = false;
+        {% endif %}
+        </script>
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/img/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/img/favicon/favicon-16x16.png">
+        <link rel="manifest" href="/static/img/favicon/site.webmanifest">
+        <link rel="mask-icon" href="/static/img/favicon/safari-pinned-tab.svg" color="#61aafb">
+        <link rel="shortcut icon" href="/static/img/favicon/favicon.ico">
+        <meta name="msapplication-TileColor" content="#9eccff">
+        <meta name="msapplication-config" content="/static/img/favicon/browserconfig.xml">
+        <meta name="theme-color" content="#9eccff">
+        
+
+        <script src="{% static 'js/tailwind.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <link rel="stylesheet" href="{% static 'css/fontawesome/css/fontawesome.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/fontawesome/css/solid.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/fontawesome/css/regular.min.css' %}">
+        {% block head %}{% endblock head %}
+    </head>
+    <body>
+        <div id="header" class="absolute h-12 top-0 left-0 w-full flex justify-between items-center bg-blue-100">
+            <div class="">
+                    <a href='/'>
+                        <img class="h-10 w-10 inline" src="{% static 'img/salon_icon.svg' %}" />
+                        <span class="text-lg align-middle">CCI Studio - {{ role }}</span>
+                    </a>
+            </div>
+            <div class="flex justify-between items-center">
+                {% block menu %}
+                {% if user.is_authenticated %}
+                    
+<!--                     <a href="/channels" class="mx-3 hover:underline">Channels</a>
+                    <a href="/shows" class="mx-3 hover:underline">Shows</a>
+                    <a href="/tickets" class="mx-3 hover:underline">Tickets</a> -->
+
+                    {% else %}
+<!--                         (public menu) -->
+                    {% endif %}
+                    
+                {% endblock menu %}
+            </div>
+            <div class="">
+                {% block login %}
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'core:home' %}" class="px-2 hover:underline">
+                            {{ user.username }}
+                        </a> 
+                        - <a href="{% url 'core:logout' %}" class="px-2 hover:underline">Logout</a>
+                    {% else %}
+                        <a href="{% url 'core:login' %}" class="px-2 hover:underline">Login</a>/<a href="{% url 'core:register' %}" class="px-2 hover:underline">Register</a>
+                    {% endif %}
+                {% endblock login %}
+            </div>
+        </div>
+        <div id="main" class="absolute top-12 bottom-8 left-0 w-full">
+            {% block main %}
+            {% endblock main %}
+        </div>
+      
+        <div id="footer"
+             class="fixed bottom-0 h-8 left-0 w-full flex items-center justify-center text-xs bg-gray-200">
+            CCI Salon ©2023 DRHMedia
+        </div>
+
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/moment.min.js' %}"></script>
+        <script src="{% static 'js/sweetalert.min.js' %}"></script>
+        {% if user.is_authenticated %}
+        {% endif %}
+        
+        {% block script_includes %}{% endblock script_includes %}
+        {% block script %}{% endblock script %}
+
+    </body>
+</html>

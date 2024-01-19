@@ -1,0 +1,79 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block main %}
+<div class="mx-8">
+    <div class="text-xl font-bold my-4">Appointments for {{ date }}
+      <span class="font-normal text-sm">
+      <a href="/home/{{prev_date}}">&lt;&lt; prev</a> - 
+      <a href="/home/{{next_date}}">next &gt;&gt;</a>
+      </span>
+    </div>
+
+
+  {% if bookings %}
+  <div class="">We're open today :)</div>
+      {% regroup bookings by timeslot as timeslot_list %}
+      {% for timeslot in timeslot_list %}
+      <ol id="{{ t }}" class="border-2 rounded-xl bg-gray-200 m-4 px-4">
+          {{ timeslot.grouper.period.name }}
+          ({{ timeslot.grouper.period.start_time }} - {{ timeslot.grouper.period.end_time }})
+        
+
+          {% if timeslot.grouper.note %}
+            <span class="italic">- {{ timeslot.grouper.note }}</span>
+          {% endif %}
+          
+
+        {% for booking in timeslot.list %}
+          <li class="mx-8 
+            {% if booking.status == "complete" or booking.completed %} text-green-600 {% endif %}
+            {% if booking.status == "cancelled" %} text-red-600 {% endif %}
+            {% if booking.status == "no_show" %} text-purple-600 {% endif %}
+            list-decimal my-4">
+            {{ booking.user.first_name }} {{ booking.user.last_name }} 
+            {% if booking.service %}
+              - {{ booking.service }}
+            {% endif %}
+
+            
+              
+            
+
+            <a href="/booking/{{booking.id}}/edit" class="font-bold text-sm text-green-600">EDIT</a>
+          </li>
+        {% endfor %}
+      </ol>
+    {% endfor %}
+  {% else %}
+   <div class="font-bold">
+      Sorry, no timeslots active on this date...   
+   </div>
+  {% endif %}
+</div>
+{% endblock main %}
+
+
+{% block script %}
+<script>
+  console.log("loaded")
+  function cancel(id){
+    let response = confirm("are you sure you want to cancel this appointment?")
+    if(response==true){
+      
+      $.ajax({
+          type: "POST",
+          headers: {
+              'X-CSRFToken': csrftoken
+          },
+          url: "/cancel/" + id,
+          data: {},
+          success: function(data) {
+              console.log("got result", data); 
+              window.location.reload()
+          }
+        })
+    }
+    
+  }
+</script>
+{% endblock script %}

@@ -1,0 +1,37 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block main %}
+
+
+<div class="w-full h-full flex flex-col items-center justify-center">
+  
+{% if form.errors %}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+  
+  {% if next %}
+    {% if user.is_authenticated %}
+    <p>Your account doesn't have access to this page. To proceed,
+    please login with an account that has access.</p>
+    {% else %}
+    <p>Please login to see this page.</p>
+    {% endif %}
+{% endif %}
+
+      <form method="post" action="{% url 'core:login' %}">
+        <div class="flex font-bold justify-center mt-6">
+            <img class="h-20 w-20 mb-3" src="{% static 'img/salon_icon.svg' %}" />
+        </div>
+            {% csrf_token %}
+          <table>
+            {{ form }}
+          </table>
+          <input type="hidden" name="next" value="{{ next }}">
+          <input type="submit" value ="Login" class="w-full py-2 mt-4 rounded-full bg-blue-400 text-gray-100 focus:outline-none"/>
+        </form>
+      <p><a href="{% url 'core:password_reset' %}">Lost password?</a></p>
+</div>
+
+
+{% endblock %}

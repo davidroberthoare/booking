@@ -1,0 +1,23 @@
+body{
+/*   background:pink; */
+}
+
+form table tr{
+  vertical-align:top;
+}
+form table tr th{
+  text-align:right;
+  vertical-align: middle;
+}
+form table td{
+  padding:5px;
+  vertical-align: middle;
+}
+form table input, form table textarea{
+  border: thin solid grey;
+}
+
+form table textarea{
+  height: 5em;
+  width: 50vw;
+}
