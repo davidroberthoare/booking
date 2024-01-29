@@ -1,4 +1,6 @@
 .env
+static_collected
+
 # Django #
 *.log
 *.pot

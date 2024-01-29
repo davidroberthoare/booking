@@ -62,10 +62,20 @@
             <div class="">
                 {% block login %}
                     {% if user.is_authenticated %}
+                        <script> 
+                            function goLogout() { 
+                                document.getElementById("logoutForm").submit(); 
+                            } 
+                        </script> 
                         <a href="{% url 'core:home' %}" class="px-2 hover:underline">
                             {{ user.username }}
                         </a> 
-                        - <a href="{% url 'core:logout' %}" class="px-2 hover:underline">Logout</a>
+                        - <a href="#" onclick="goLogout()" class="px-2 hover:underline">Logout</a>
+
+                        <form id="logoutForm" action="{% url 'core:logout' %}" method="POST">{% csrf_token %}</form>
+
+
+
                     {% else %}
                         <a href="{% url 'core:login' %}" class="px-2 hover:underline">Login</a>/<a href="{% url 'core:register' %}" class="px-2 hover:underline">Register</a>
                     {% endif %}

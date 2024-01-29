@@ -13,8 +13,9 @@ form table td{
   padding:5px;
   vertical-align: middle;
 }
-form table input, form table textarea{
+form input, form textarea{
   border: thin solid grey;
+  margin: 2px 0px;
 }
 
 form table textarea{
